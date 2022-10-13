@@ -47,6 +47,11 @@ Material: Wool
 12 items are made of Wool
 ```
 
+3) Get return string 
+```
+>>> import go_template
+>>> go_template.render_template('tests/sample.tmpl','tests/values.yml','return')
+```
 
 __NOTE__: Paths provided to render_template should either be absolute path or relative to directory where it is ran.
 
@@ -60,9 +65,12 @@ For building a fresh shared object of text/template, you must have golang^1.5 in
 ```
 
 This will create [template.so](https://github.com/harsh-98/go-template/blob/master/bind/template.so) in the `bind` folder.
+Default template.so file is for the M1 macbook.
+If you use Intel mac or Linux please refer build.sh script.
 
 ## Motivation
-Currently, there is no python package which exposes golang `text/template` functionality to python. And I am in the process of learning about interoperability between different languages. So, I started working on this as a learning project.
+Origin go_template couldn't return string. It could return in a file or output.
+I add return string.
 
 ## Explanation
 Golang library cannot be directly used in python. Firstly, we have to compile it as shared object or archive for interoperability with C. And then create python bindings for this C object.

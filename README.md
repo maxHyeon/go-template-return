@@ -57,7 +57,6 @@ Material: Wool
 >>>     print(yml)
 ```
 
-```
  Output
 ```
 {'apiVersion': 'v1', 'kind': 'ServiceAccount', 'metadata': {'name': '<no value>', 'annotations': None, 'namespace': '<no value>'}

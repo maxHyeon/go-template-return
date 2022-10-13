@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"text/template"
 	"io/ioutil"
+        "bytes"
 )
 
 type store struct{
@@ -16,27 +17,35 @@ type store struct{
 	Values map[string]interface{};
 }
 
-func tpl(fileName string, vals interface{}, output string) error {
+func tpl(fileName string, vals interface{}, output string) (string,error) {
 	name := path.Base(fileName)
 	tmpl, err := template.New(name).ParseFiles(fileName)
 	if err != nil {
-		return err
+		return "",err
 	}
 
 	var file io.Writer
-	if output != "" {
+	if output != "" && output != "return" {
 		f, _ :=os.Create(output)
 		defer f.Close()
 		file = f
-	} else {
+	} else if output == "return" {
+           
+        }  else {
 		file = os.Stdout
 	}
-
-	err = tmpl.Execute(file, vals)
+        
+        var rslt bytes.Buffer
+        if output == "return" {
+            err = tmpl.Execute(&rslt, vals)
+            return rslt.String(), nil
+        } else {
+	    err = tmpl.Execute(file, vals)
+        }
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return "", nil
 }
 
 func (s *store)getValues() {
@@ -51,15 +60,16 @@ func (s *store)getValues() {
 }
 
 //export RenderTemplate
-func RenderTemplate(template, fileName, output string){
+func RenderTemplate(template, fileName, output string) *C.char {
 	s := store{FileName: fileName}
 	s.getValues()
-	err := tpl(template, s.Values, output)
+	rslt, err := tpl(template, s.Values, output)
 	if err != nil {
 		panic(err)
     }
+    return C.CString(rslt)
 }
 
 func main(){
-	// RenderTemplate("sample.tmpl", "values.yml", "")
+	//RenderTemplate("sample.tmpl", "values.yml", "")
 }

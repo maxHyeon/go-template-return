@@ -4,6 +4,7 @@ import os
 root_dir = os.path.dirname(__file__)
 shared_lib = os.path.join(root_dir, 'bind', 'template.so')
 lib = cdll.LoadLibrary(shared_lib)
+#lib = CDLL(shared_lib)
 
 class GoString(Structure):
     _fields_ = [("p", c_char_p), ("n", c_longlong)]
@@ -19,9 +20,14 @@ def get_go_path(file):
 def render_template(template, value_file, output):
     template = get_go_path(template)
     value_file = get_go_path(value_file)
-    output = get_go_path(output)
+    if output != 'return' :
+        output = get_go_path(output)
+    elif output == 'return' :
+        output = get_go_string(output)
 
     lib.RenderTemplate.argtypes = [GoString, GoString, GoString]
-    lib.RenderTemplate(template, value_file, output)
+    lib.RenderTemplate.restype = c_char_p 
+    return lib.RenderTemplate(template, value_file, output).decode('utf-8')
+    
 
-# render_template('tests/sample.tmpl', 'tests/values.yml','')
+#render_template('tests/sample.tmpl', 'tests/values.yml','')

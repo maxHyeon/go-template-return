@@ -47,11 +47,23 @@ Material: Wool
 12 items are made of Wool
 ```
 
-3) Get return string 
+3) Get return string and yaml parsing
 ```
 >>> import go_template
->>> go_template.render_template('tests/sample.tmpl','tests/values.yml','return')
+>>> import yaml
+>>> tmp_yaml = go_template.render_template('tests/sample.tmpl','tests/values.yml','return')
+>>> ymls = yaml.load_all(ymp_yaml, Loader=yaml.FullLoader)
+>>> for yml in ymls:
+>>>     print(yml)
 ```
+
+```
+ Output
+```
+{'apiVersion': 'v1', 'kind': 'ServiceAccount', 'metadata': {'name': '<no value>', 'annotations': None, 'namespace': '<no value>'}
+{'apiVersion': 'rbac.authorization.k8s.io/v1', 'kind': 'Role', 'metadata': {'namespace': '<no value>', 'name': 'role'}, 'rules': [{'apiGroups': [''], 'resources': ['pods', 'pods/log'], 'verbs': ['get', 'list']}]}
+```
+
 
 __NOTE__: Paths provided to render_template should either be absolute path or relative to directory where it is ran.
 
